@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import '../styles.scss';
 import { RootContext } from '../../RootContext';
 import { lineSelectKeys } from '../Buttons';
@@ -28,23 +28,25 @@ export enum lineColors {
 
 type LineProps = {
     value?: ReactElement,
-    LeftSide?: ReactElement,
-    RightSide?: ReactElement,
+    leftSide?: ReactElement,
+    rightSide?: ReactElement,
     lsk?: lineSelectKeys,
 }
 
-// TODO add the callbacks in here from the fields
 /**
  * A Line component that can handle split fields and single value fields. This is a composite component with which to
  * insert <span /> components into.
  * @param value Used for single value fields, ReactElement should return a <span />.
- * @param LeftSide Used for the left side of a split field, should return a <span />
- * @param RightSide Used for the right side of a split field, should return a <span />
+ * @param leftSide Used for the left side of a split field, should return a <span />
+ * @param rightSide Used for the right side of a split field, should return a <span />
  * @param lsk Line select key, used for split fields
  * @constructor
  */
-export const Line: React.FC<LineProps> = ({ lsk, value, LeftSide, RightSide }) => {
+export const Line: React.FC<LineProps> = ({ lsk, value, leftSide, rightSide }) => {
     const [scratchpad, , , ] = useContext(RootContext); // eslint-disable-line array-bracket-spacing
+    const [leftValue, setLeftValue] = useState(undefined);
+    const [rightValue, setRightValue] = useState(undefined);
+
     function splitScratchpadValue() {
         let [leftValue, rightValue] = scratchpad.split('/');
 
@@ -59,52 +61,27 @@ export const Line: React.FC<LineProps> = ({ lsk, value, LeftSide, RightSide }) =
 
         return [leftValue, rightValue];
     }
+    if (lsk) {
+        useInteractionEvent(lsk, () => {
+            const [lVal, rVal] = splitScratchpadValue();
+            setLeftValue(lVal);
+            setRightValue(rVal);
+        });
+    }
 
     function handleSplitLine() {
         let returnVal = value;
-        if (LeftSide && RightSide) {
-            if (lsk) {
-                useInteractionEvent(lsk, () => {
-                    const [leftValue, rightValue] = splitScratchpadValue();
-                    if (!leftValue) {
-                        returnVal = (
-                            <>
-                                {React.cloneElement(LeftSide, { value: leftValue })}
-                                /
-                                {RightSide}
-                            </>
-                        );
-                    } else if (!rightValue) {
-                        returnVal = (
-                            <>
-                                {LeftSide}
-                                /
-                                {React.cloneElement(RightSide, { value: rightValue })}
-                            </>
-                        );
-                    } else {
-                        returnVal = (
-                            <>
-                                {React.cloneElement(LeftSide, { value: leftValue })}
-                                /
-                                {React.cloneElement(RightSide, { value: rightValue })}
-                            </>
-                        );
-                    }
-                });
-            } else {
-                returnVal = (
-                    <>
-                        {LeftSide}
-                        |
-                        {RightSide}
-                    </>
-                );
-            }
+        if (leftSide && rightSide) {
+            returnVal = (
+                <>
+                    {React.cloneElement(leftSide, { value: leftValue })}
+                    /
+                    {React.cloneElement(rightSide, { value: rightValue })}
+                </>
+            );
         }
         return returnVal;
     }
-
     return (
         <>
             <p className="line">
