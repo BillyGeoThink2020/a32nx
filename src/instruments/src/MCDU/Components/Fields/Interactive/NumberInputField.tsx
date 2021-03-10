@@ -5,7 +5,7 @@ import { RootContext } from '../../../RootContext';
 import { useInteractionEvent } from '../../../../Common/hooks';
 
 type NumberFieldProps = {
-    value: number | string | undefined,
+    value: number | undefined,
     nullValue: string,
     min: number,
     max: number,
@@ -33,10 +33,10 @@ export const NumberInputField: React.FC<NumberFieldProps> = (
     const [scratchpad, setScratchpad, , ] = useContext(RootContext); // eslint-disable-line array-bracket-spacing
 
     useInteractionEvent(lsk, () => {
-        const value = float ? parseFloat(scratchpad) : parseInt(scratchpad);
-        if (!Number.isNaN(value)) {
-            if (value >= min && value <= max) {
-                selectedCallback(value);
+        const newVal = float ? parseFloat(scratchpad) : parseInt(scratchpad);
+        if (!Number.isNaN(newVal)) {
+            if (newVal >= min && newVal <= max) {
+                selectedCallback(newVal);
             } else {
                 setScratchpad('ENTRY OUT OF RANGE');
             }

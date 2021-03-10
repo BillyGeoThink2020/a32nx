@@ -12,6 +12,9 @@ import { NumberInputField } from '../../../Components/Fields/Interactive/NumberI
 import { Field } from '../../../Components/Fields/NonInteractive/Field';
 import { useSimVar } from '../../../../Common/simVars';
 import { LineSelectField } from '../../../Components/Fields/Interactive/LineSelectField';
+import { SplitLine } from '../../../Components/Lines/SplitLine';
+import { SplitStringField } from '../../../Components/Fields/Interactive/Split/SplitStringField';
+import { SplitNumberField } from '../../../Components/Fields/Interactive/Split/SplitNumberField';
 
 // TODO when FMGS is in place then event and color management to these components
 
@@ -155,30 +158,45 @@ const CostIndexLine: React.FC = () => {
 };
 
 // TODO Parse the scratchpad input and do validation for split fields or find a way to do it in Line Component
-const CruiseFLTemp: React.FC = () => (
-    <LineHolder>
-        <Line value={<LabelField value="CRZ FL/TEMP" side={lineSides.left} color={lineColors.white} />} />
-        <Line
-            leftSide={(
-                <StringInputField
-                    value={undefined}
-                    nullValue="-----"
-                    side={lineSides.left}
-                />
-            )}
-            rightSide={(
-                <NumberInputField
-                    value={undefined}
-                    nullValue="___°"
-                    min={100}
-                    max={999}
-                    side={lineSides.left}
-                    color={lineColors.inop}
-                />
-            )}
-        />
-    </LineHolder>
-);
+const CruiseFLTemp: React.FC = () => {
+    const [flString, setFL] = useState<string>();
+    const [temp, setTemp] = useState<number>();
+    return (
+        <LineHolder>
+            <Line value={<LabelField value="CRZ FL/TEMP" side={lineSides.left} color={lineColors.white} />} />
+            <SplitLine
+                lsk={lineSelectKeys.L6}
+                leftSide={(
+                    <SplitStringField
+                        value={flString}
+                        nullValue="-----"
+                        side={lineSides.left}
+                        color={flString === undefined ? lineColors.cyan : lineColors.amber}
+                        size={lineSizes.regular}
+                        selectedCallback={(value) => {
+                            setFL(value);
+                        }}
+                        selectedValidation={() => true}
+                    />
+                )}
+                rightSide={(
+                    <SplitNumberField
+                        value={temp}
+                        nullValue="___°"
+                        min={-270}
+                        max={100}
+                        size={lineSizes.regular}
+                        side={lineSides.left}
+                        color={lineColors.inop}
+                        selectedCallback={(value) => {
+                            setTemp(value);
+                        }}
+                    />
+                )}
+            />
+        </LineHolder>
+    );
+};
 
 // TODO finish this
 const AlignOptionLine: React.FC = () => (

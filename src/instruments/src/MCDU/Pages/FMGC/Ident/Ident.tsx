@@ -5,7 +5,7 @@ import { RootContext } from '../../../RootContext.jsx';
 import { LineHolder } from '../../../Components/Lines/LineHolder';
 import { Line, lineColors, lineSides, lineSizes } from '../../../Components/Lines/Line';
 import { RowHolder } from '../../../Components/RowHolder';
-import { LabelField } from '../../../Components/Fields/NonInteractive/Label';
+import { LabelField } from '../../../Components/Fields/NonInteractive/LabelField';
 import { EmptyLine } from '../../../Components/Lines/EmptyLine';
 import { Field } from '../../../Components/Fields/NonInteractive/Field';
 
